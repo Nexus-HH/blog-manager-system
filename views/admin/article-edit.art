@@ -1,0 +1,86 @@
+{{extend './common/layout.art'}}
+
+{{block 'main'}}
+    {{include './common/header.art'}}
+    <!-- 主体内容 -->
+    <div class="content">
+        {{include './common/aside.art'}}
+        <div class="main">
+            <!-- 分类标题 -->
+            <div class="title">
+                <h4>5b9a716cb2d2bf17706bcc0a</h4>
+            </div>
+            <!-- /分类标题 -->
+            <!--
+                enctype是指定表单的数据编码类型
+                默认：application/x-www-form-urlencoded  ===> name=zhangsan&age=18
+                    ：multipart/form-data  ===> 将表单数据编码成二进制类型
+            -->
+            <form class="form-container" action="/admin/article-add" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" class="form-control" placeholder="请输入文章标题" name="title">
+                </div>
+                <div class="form-group">
+                    <label>作者id</label>
+                    <input type="text" class="form-control" readonly name="author" value="{{@userInfo._id}}">
+                </div>
+                <div class="form-group">
+                    <label>发布时间</label>
+                    <input type="date" class="form-control" name="publishDate">
+                </div>
+                
+                <div class="form-group">
+                   <label for="exampleInputFile">文章封面</label>
+                   <!--mutiple允许用户多选文件-->
+                   <input type="file" name="cover" id="file" multiple>
+                   <div class="thumbnail-waper">
+                       <img class="img-thumbnail" src="" id="preview">
+                   </div>
+                </div>
+                <div class="form-group">
+                    <label>内容</label>
+                    <textarea class="form-control" id="editor" name="content"></textarea>
+                </div>
+                <div class="buttons">
+                    <input type="submit" class="btn btn-primary">
+                </div>
+            </form>
+            
+        </div>
+    </div>
+    <!-- /主体内容 -->
+{{/block}}
+
+{{block 'script'}}
+    <script src="/admin/lib/ckeditor5/ckeditor.js"></script>
+    <script type="text/javascript">
+    
+        let editor;
+
+        ClassicEditor
+                .create( document.querySelector('#editor'))
+                .then(newEditor => {
+                    editor = newEditor;
+                })
+                .catch( error => {
+                    console.error( error );
+                });
+
+        // 获取数据
+        // const editorData = editor.getData();
+        $('#file').on('change',function(){
+            //创建文件读取对象
+            let reader = new FileReader();
+            //this.files代表用户选择的文件列表
+            //读取文件
+            reader.readAsDataURL(this.files[0]);
+            //监听onload事件
+            reader.onload = function(){
+                //获取文件读取结果reader.result
+                $('#preview').prop('src',reader.result);
+            }
+
+        }); 
+    </script>
+{{/block}}
